@@ -1,0 +1,39 @@
+Per-house table:
+ area_sqft  bedrooms  location_score  price  pred_lr  pred_dt  pred_rf  err_lr  err_dt  err_rf
+      2385         4            7.42 428650   469964   428806   458862   41314     156   30212
+      1842         3            4.63 321940   329427   301213   336724    7487   20727   14784
+      1267         2            3.18 245780   174392   232882   197748   71388   12898   48032
+      2896         5            8.91 592310   597380   523723   544162    5070   68587   48148
+      1574         4            6.27 318450   332060   300849   320817   13610   17601    2367
+      2031         3            5.04 347890   347019   312858   347836     871   35032      54
+       982         2            2.37 178920   107992   181882   127481   70928    2962   51439
+      2457         4            9.15 521670   522628   464410   471374     958   57260   50296
+      1389         5            7.68 332580   330753   300849   320753    1827   31731   11827
+      1765         3            4.26 286430   281532   264452   297142    4898   21978   10712
+
+Aggregate on 10:
+            Model          MAE         RMSE       R2
+    Random Forest 26787.197500 33455.351258 0.920096
+    Decision Tree 26893.190085 34080.024695 0.917084
+Linear Regression 21835.324278 34828.176730 0.913404
+
+
+Simple analysis of new 10 houses
+--------------------------------
+You gave 10 new houses with true price. We used same 3 models learned from 500 houses.
+
+How result came:
+- Model learned rule: price ~ 153*area + 12495*location + 8149*bedrooms ... (from train.py)
+- For each new house, plug its 7 numbers into rule -> predicted price
+- Compare predicted vs true price -> error
+
+Example: first new house 2385 sqft, location 7.42, true $428650
+  -> Linear predicted $469,964 error $41,314
+  -> Random Forest $458,862 error $30,212
+  -> Decision Tree $428,806 error $156
+
+Best on this 10: Random Forest (highest R2, lowest avg error)
+If Linear still best, it means simple straight-line rule still works for these new houses.
+If error much bigger than 20k avg seen before, it means these 10 are unusual (maybe very new or far location).
+
+Files: predictions_10.csv has all preds + errors per house.

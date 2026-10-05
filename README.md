@@ -1,80 +1,93 @@
-# ML Home Price Prediction
+# Machine Learning & Deep Learning Home Price Prediction
 
-Simple ML models to predict home prices. Compares Linear Regression, Decision Tree, Random Forest.
+End-to-end Machine Learning project comparing **Linear Regression**, **Decision Tree**, **Random Forest**, and a **Multi-Layer Perceptron (MLP) Neural Network** for housing price prediction, enhanced with **StandardScaler**, **Principal Component Analysis (PCA)**, and complete **training loss & performance graph analysis**.
 
-## Dataset
+> 📖 **Full In-Depth Technical Guide**: For complete mathematical explanations, PCA proofs, loss curve derivations, and graph interpretations, see [DOCUMENTATION.md](file:///Users/prabinkarki/Desktop/ML/DOCUMENTATION.md).
 
-`data/home_prices.csv` — 500 rows, 8 columns (7 features + price)
+---
 
-| Feature | Description |
-|---|---|
-| area_sqft | House area in sq ft |
-| bedrooms | Number of bedrooms |
-| bathrooms | Number of bathrooms |
-| age_years | Age of house |
-| garage_spaces | Garage capacity |
-| location_score | Location rating (0-10) |
-| distance_to_city_km | Distance to city center |
-| price | Target — home price ($) |
+## 📊 Project Highlights
 
-## Models
+- **Dataset**: 500 house sales records across 7 predictive features (`area_sqft`, `bedrooms`, `bathrooms`, `age_years`, `garage_spaces`, `location_score`, `distance_to_city_km`).
+- **Feature Scaling**: Standard Normalization ($Z$-score scaling) on features and target variables.
+- **Dimensionality Reduction (PCA)**: Principal Component Analysis preserving **95% cumulative explained variance**.
+- **Models Evaluated**:
+  1. **Linear Regression** — Parametric baseline with interpretable feature coefficients.
+  2. **Decision Tree Regressor** (`max_depth=5`) — Non-linear tree partitioning.
+  3. **Random Forest Regressor** (`n_estimators=200`) — Bagging ensemble of 200 trees.
+  4. **Neural Network (MLPRegressor)** (`hidden_layer_sizes=(64, 32)`, ReLU activation, Adam optimizer, iteration loss curve tracking).
+- **Evaluation Metrics**: $R^2$ Score (Goodness of fit), MAE (Mean Absolute Error), and RMSE (Root Mean Squared Error).
+- **Graph Diagnostics**: 8 detailed visual charts covering distributions, PCA variance, epoch loss descent, model comparison, and actual vs. predicted scatters.
 
-- **Linear Regression** — baseline
-- **Decision Tree** (`max_depth=5`) — interpretable
-- **Random Forest** (`n_estimators=200`) — best R2 usually
+---
 
-Evaluated on 80/20 split (`random_state=42`) with MAE, RMSE, R2. Also prints LR coefficients and predicts example house (2000 sqft, 3bd/2ba).
+## 📈 Graph Analysis Summary
 
-## Requirements
+| Graph Name | File / Notebook Source | What It Analyzes |
+|---|---|---|
+| **PCA Explained Variance** | `notebook.ipynb` | Shows cumulative variance vs. number of components with 95% threshold line. |
+| **Neural Network Loss Curve** | `notebook.ipynb` | Tracks MSE loss across epochs/iterations using the Adam optimizer to verify model convergence. |
+| **Model $R^2$ Comparison** | `plots/04_r2_comparison.png` & notebook | Bar chart comparing the percentage of variance explained by each model ($R^2$). |
+| **Model MAE Comparison** | `notebook.ipynb` | Compares average absolute dollar prediction error across all models. |
+| **Model RMSE Comparison** | `notebook.ipynb` | Compares root mean squared errors, highlighting sensitivity to outlier errors. |
+| **Actual vs. Predicted** | `plots/05_actual_vs_pred.png` & notebook | Multi-panel scatter plot comparing predictions against ground truth diagonal line $y = x$. |
+| **Linear Regression Coefficients** | `plots/03_lr_coefficients.png` & notebook | Horizontal bar chart showing positive (green) and negative (red) feature impacts on price. |
+| **Price & Feature Distribution** | `plots/01_price_hist.png`, `02_area_location_scatter.png` | Histogram of sale prices and scatter plots showing correlations for area and location score. |
 
-- Python 3.10+ (tested on 3.14.6)
-- See `requirements.txt`: `pandas`, `numpy`, `scikit-learn`
+---
 
-## Run
+## 🚀 Quickstart
 
+### 1. Setup Environment
 ```bash
-# 1. create venv (required on Homebrew Python — PEP 668)
 python3 -m venv .venv
 source .venv/bin/activate
-
-# 2. install deps
 pip install -r requirements.txt
+```
 
-# 3. run
+### 2. Run Main Training Script
+```bash
+# Trains models and exports 5 PNG charts into plots/
 python train.py
+
+# Optional: Display interactive popup windows
+python train.py --show
 ```
 
-Expected output:
+### 3. Run Inference on New Test Houses
+```bash
+python analyze_new.py
 ```
-Data shape: (500, 8)
-Model comparison:
-            Model   MAE  RMSE    R2
-...
-Best model: Random Forest
-Linear Regression coefficients ...
-Linear Regression predicted price ...  $...
-Decision Tree predicted price ...      $...
-Random Forest predicted price ...      $...
-```
+Exports predictions and error breakdowns to `predictions_10.csv` and `analysis_10.txt`.
 
-## Project Structure
+### 4. Interactive Jupyter Notebook
+```bash
+pip install jupyter
+jupyter lab notebook.ipynb
+```
+Opens interactive workflow with inline PCA scree plots, Neural Network epoch training curves, and interactive model benchmarks.
+
+---
+
+## 📁 Repository Structure
 
 ```
 ML/
-├── train.py              # train + evaluate 3 models
 ├── data/
-│   └── home_prices.csv   # 500-row dataset
-├── requirements.txt
-└── README.md
+│   ├── home_prices.csv               # 500-row primary training dataset
+│   └── new_house_data_10_rows.csv    # 10-row new house validation set
+├── plots/                            # Auto-generated high-resolution PNG charts
+│   ├── 01_price_hist.png             # Target price distribution
+│   ├── 02_area_location_scatter.png  # Area & location correlation scatters
+│   ├── 03_lr_coefficients.png        # Feature coefficient weights
+│   ├── 04_r2_comparison.png          # Model R² comparison bar chart
+│   └── 05_actual_vs_pred.png         # Actual vs. predicted scatter plots
+├── train.py                          # Main model training & plot generation script
+├── analyze_new.py                    # Inference script for new house data
+├── notebook.ipynb                    # Jupyter notebook (PCA, Neural Net epochs, plots)
+├── predictions_10.csv                # Prediction outputs on 10-house verification set
+├── analysis_10.txt                   # Text summary report of 10-house predictions
+├── requirements.txt                  # Python dependencies
+├── DOCUMENTATION.md                  # Comprehensive technical documentation
+└── README.md                         # Project overview and quickstart guide
 ```
-
-## Troubleshooting
-
-**`error: externally-managed-environment`**
-→ Homebrew Python blocks system pip (PEP 668). Use venv as above. Don't use `--break-system-packages`.
-
-**`FileNotFoundError: home_prices.csv`**
-→ Fixed in `train.py:16` to `data/home_prices.csv`. If you moved CSV, update path there.
-
-**`ModuleNotFoundError: pandas/sklearn`**
-→ `source .venv/bin/activate` then `pip install -r requirements.txt`
